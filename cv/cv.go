@@ -79,11 +79,11 @@ func PyrUp(src, dst Arr, filter int) {
 }
 
 type IplConvKernel struct {
-	NCols int
-	NRows int
+	NCols   int
+	NRows   int
 	AnchorX int
 	AnchorY int
-	Values uintptr // TODO
+	Values  uintptr // TODO
 	NShiftR int
 }
 
