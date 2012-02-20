@@ -87,3 +87,9 @@ func NamedWindow(name string, flags int) {
 func WaitKey(delay time.Duration) rune {
 	return rune(C.cvWaitKey(C.int(delay.Nanoseconds() / 1e6)))
 }
+
+func DestroyWindow(name string) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	C.cvDestroyWindow(cname)
+}
