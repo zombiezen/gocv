@@ -41,6 +41,12 @@ type Rect struct {
 	X, Y, Width, Height int
 }
 
+type Scalar [4]float64
+
+func (s Scalar) cvScalar() C.CvScalar {
+	return C.CvScalar{[4]C.double{C.double(s[0]), C.double(s[1]), C.double(s[2]), C.double(s[3])}}
+}
+
 // Types of thresholding
 const (
 	THRESH_BINARY     = C.CV_THRESH_BINARY
