@@ -57,6 +57,14 @@ func ContourArea(contour Arr, slice Slice, oriented bool) float64 {
 	return float64(C.cvContourArea(contour.arr(), C.CvSlice{C.int(slice.Start), C.int(slice.End)}, corient))
 }
 
+func ArcLength(contour Arr, slice Slice, isClosed int) float64 {
+	return float64(C.cvArcLength(contour.arr(), C.CvSlice{C.int(slice.Start), C.int(slice.End)}, C.int(isClosed)))
+}
+
+func ContourPerimeter(contour Arr) float64 {
+	return ArcLength(contour, WHOLE_SEQ, 1)
+}
+
 func CheckContourConvexity(contour Arr) bool {
 	return C.cvCheckContourConvexity(contour.arr()) != 0
 }
