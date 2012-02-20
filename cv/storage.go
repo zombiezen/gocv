@@ -1,7 +1,7 @@
 package cv
 
-// #cgo CFLAGS: -I/usr/include/opencv -Wno-error
-// #cgo LDFLAGS: -lcv -lcxcore
+// #cgo CFLAGS: -Wno-error
+// #cgo pkg-config: opencv
 // #include "cv.h"
 import "C"
 

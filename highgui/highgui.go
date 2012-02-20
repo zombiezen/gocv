@@ -1,7 +1,7 @@
 package highgui
 
-// #cgo CFLAGS: -I/usr/include/opencv -Wno-error
-// #cgo LDFLAGS: -lcv -lhighgui
+// #cgo CFLAGS: -Wno-error
+// #cgo pkg-config: opencv
 // #include "highgui.h"
 import "C"
 
