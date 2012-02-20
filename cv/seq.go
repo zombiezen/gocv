@@ -34,6 +34,9 @@ func (s Seq) Next() Seq {
 
 // At returns the element at i.
 func (s Seq) At(i int) unsafe.Pointer {
+	if i < 0 || i >= int(s.seq.total) {
+		panic("Seq index out of bounds")
+	}
 	return unsafe.Pointer(C.cvGetSeqElem(s.seq, C.int(i)))
 }
 
