@@ -31,7 +31,7 @@ const (
 // added to every point in the contour.
 func FindContours(image Arr, storage MemStorage, mode, method int, offset Point) (Seq, error) {
 	var seq Seq
-	result := C.cvFindContours(image.arr(), storage.s, &seq.seq, C.int(unsafe.Sizeof(C.CvContour{})), C.int(mode), C.int(method), C.CvPoint{C.int(offset.X), C.int(offset.Y)})
+	result := C.cvFindContours(image.arr(), storage.s, &seq.seq, C.sizeof_CvContour, C.int(mode), C.int(method), C.CvPoint{C.int(offset.X), C.int(offset.Y)})
 	if result < 0 {
 		// TODO: Get error string
 		return Seq{}, errors.New("FindContours failed")
@@ -48,7 +48,7 @@ const (
 // supported. parameter is the desired approximation accuracy. parameter2
 // should be zero to indicate only the given contour.
 func ApproxPoly(srcSeq Seq, storage MemStorage, method int, parameter float64, parameter2 int) Seq {
-	return Seq{C.cvApproxPoly(unsafe.Pointer(srcSeq.seq), C.int(unsafe.Sizeof(C.CvContour{})), storage.s, C.int(method), C.double(parameter), C.int(parameter2))}
+	return Seq{C.cvApproxPoly(unsafe.Pointer(srcSeq.seq), C.sizeof_CvContour, storage.s, C.int(method), C.double(parameter), C.int(parameter2))}
 }
 
 // ContourArea returns the area inside contour. If oriented is true, then a
