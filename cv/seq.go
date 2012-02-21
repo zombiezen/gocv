@@ -7,6 +7,7 @@ import (
 	"unsafe"
 )
 
+// Seq is a generic OpenCV sequence.
 type Seq struct {
 	seq *C.CvSeq
 }

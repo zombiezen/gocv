@@ -14,6 +14,7 @@ func NewMemStorage(blockSize int) MemStorage {
 	return MemStorage{C.cvCreateMemStorage(C.int(blockSize))}
 }
 
+// Release deallocates all of the memory in the pool.
 func (s MemStorage) Release() {
 	C.cvReleaseMemStorage(&s.s)
 }

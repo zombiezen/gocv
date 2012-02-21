@@ -5,6 +5,7 @@ import "C"
 
 const AA = C.CV_AA
 
+// PolyLine draws one or more lines onto img.
 func PolyLine(img Arr, points [][]Point, closed bool, color Scalar, thickness, lineType, shift int) {
 	if len(points) == 0 {
 		return
