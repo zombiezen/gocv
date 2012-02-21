@@ -1,3 +1,6 @@
+/*
+	Package cv provides idiomatic bindings to OpenCV.
+*/
 package cv
 
 // #cgo CFLAGS: -Wno-error

@@ -1,12 +1,9 @@
-package highgui
+package cv
 
-// #cgo CFLAGS: -Wno-error
-// #cgo pkg-config: opencv
 // #include "highgui.h"
 import "C"
 
 import (
-	"bitbucket.org/zombiezen/gocv/cv"
 	"errors"
 	"time"
 	"unsafe"
@@ -20,13 +17,13 @@ func (c Capture) Release() {
 	C.cvReleaseCapture(&c.capture)
 }
 
-func (c Capture) QueryFrame() (*cv.IplImage, error) {
+func (c Capture) QueryFrame() (*IplImage, error) {
 	image := C.cvQueryFrame(c.capture)
 	if image == nil {
 		return nil, errors.New("query failed")
 	}
 	// XXX: The pointer to this memory should not be garbage collected.
-	return (*cv.IplImage)(unsafe.Pointer(image)), nil
+	return (*IplImage)(unsafe.Pointer(image)), nil
 }
 
 func CaptureFromCAM(device int) (Capture, error) {
@@ -54,7 +51,7 @@ const (
 	LOAD_IMAGE_UNCHANGED = C.CV_LOAD_IMAGE_UNCHANGED
 )
 
-func LoadImage(name string, color int) (*cv.IplImage, error) {
+func LoadImage(name string, color int) (*IplImage, error) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 
@@ -62,14 +59,13 @@ func LoadImage(name string, color int) (*cv.IplImage, error) {
 	if image == nil {
 		return nil, errors.New("LoadImage failed")
 	}
-	return (*cv.IplImage)(unsafe.Pointer(image)), nil
+	return (*IplImage)(unsafe.Pointer(image)), nil
 }
 
-func ShowImage(name string, img *cv.IplImage) {
-	// TODO: Use cv.Arr
+func ShowImage(name string, img Arr) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	C.cvShowImage(cname, unsafe.Pointer(img))
+	C.cvShowImage(cname, img.arr())
 }
 
 // Window flags

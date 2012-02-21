@@ -20,7 +20,6 @@ For Mac OS X, the Homebrew ``opencv`` formula works.
 Once you've installed OpenCV, run::
 
     go get bitbucket.org/zombiezen/gocv/cv
-    go get bitbucket.org/zombiezen/gocv/highgui
 
 License
 =========

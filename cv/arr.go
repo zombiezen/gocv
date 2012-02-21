@@ -1,7 +1,5 @@
 package cv
 
-// #cgo CFLAGS: -Wno-error
-// #cgo pkg-config: opencv
 // #include "cv.h"
 import "C"
 
