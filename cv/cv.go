@@ -72,7 +72,11 @@ const (
 
 // Threshold applies a fixed-level threshold to a grayscale image.
 func Threshold(src, dst Arr, thresh, maxVal float64, thresholdType int) float64 {
-	return float64(C.cvThreshold(src.arr(), dst.arr(), C.double(thresh), C.double(maxVal), C.int(thresholdType)))
+	var result float64
+	do(func() {
+		result = float64(C.cvThreshold(src.arr(), dst.arr(), C.double(thresh), C.double(maxVal), C.int(thresholdType)))
+	})
+	return result
 }
 
 // Filtering algorithms
@@ -82,12 +86,16 @@ const (
 
 // PyrDown smooths and down-samples the input image.
 func PyrDown(src, dst Arr, filter int) {
-	C.cvPyrDown(src.arr(), dst.arr(), C.int(filter))
+	do(func() {
+		C.cvPyrDown(src.arr(), dst.arr(), C.int(filter))
+	})
 }
 
 // PyrUp up-samples the input image and smooths the result.
 func PyrUp(src, dst Arr, filter int) {
-	C.cvPyrDown(src.arr(), dst.arr(), C.int(filter))
+	do(func() {
+		C.cvPyrDown(src.arr(), dst.arr(), C.int(filter))
+	})
 }
 
 // IplConvKernel is a convolution kernel.
@@ -103,11 +111,15 @@ type IplConvKernel struct {
 // Dilate applies a maximum filter to the input image one or more times.  If
 // element is nil, a 3x3 rectangular element is used.
 func Dilate(src, dst Arr, element *IplConvKernel, iterations int) {
-	C.cvDilate(src.arr(), dst.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(iterations))
+	do(func() {
+		C.cvDilate(src.arr(), dst.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(iterations))
+	})
 }
 
 // Erode applies a minimum filter to the input image one or more times.  If
 // element is nil, a 3x3 rectangular element is used.
 func Erode(src, dst Arr, element *IplConvKernel, iterations int) {
-	C.cvErode(src.arr(), dst.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(iterations))
+	do(func() {
+		C.cvErode(src.arr(), dst.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(iterations))
+	})
 }

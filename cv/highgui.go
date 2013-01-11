@@ -16,12 +16,17 @@ type Capture struct {
 
 // Release closes the capture source.
 func (c Capture) Release() {
-	C.cvReleaseCapture(&c.capture)
+	do(func() {
+		C.cvReleaseCapture(&c.capture)
+	})
 }
 
 // QueryFrame returns a new frame from the capture source.
 func (c Capture) QueryFrame() (*IplImage, error) {
-	image := C.cvQueryFrame(c.capture)
+	var image *C.IplImage
+	do(func() {
+		image = C.cvQueryFrame(c.capture)
+	})
 	if image == nil {
 		return nil, errors.New("query failed")
 	}
@@ -31,7 +36,10 @@ func (c Capture) QueryFrame() (*IplImage, error) {
 
 // CaptureFromCAM creates a new capture source for the given device.
 func CaptureFromCAM(device int) (Capture, error) {
-	c := C.cvCaptureFromCAM(C.int(device))
+	var c *C.CvCapture
+	do(func() {
+		c = C.cvCaptureFromCAM(C.int(device))
+	})
 	if c == nil {
 		return Capture{}, errors.New("Capture failed")
 	}
@@ -43,7 +51,10 @@ func CaptureFromFile(filename string) (Capture, error) {
 	s := C.CString(filename)
 	defer C.free(unsafe.Pointer(s))
 
-	c := C.cvCaptureFromFile(s)
+	var c *C.CvCapture
+	do(func() {
+		c = C.cvCaptureFromFile(s)
+	})
 	if c == nil {
 		return Capture{}, errors.New("Capture failed")
 	}
@@ -61,7 +72,10 @@ func LoadImage(name string, color int) (*IplImage, error) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 
-	image := C.cvLoadImage(cname, C.int(color))
+	var image *C.IplImage
+	do(func() {
+		image = C.cvLoadImage(cname, C.int(color))
+	})
 	if image == nil {
 		return nil, errors.New("LoadImage failed")
 	}
@@ -72,7 +86,9 @@ func LoadImage(name string, color int) (*IplImage, error) {
 func ShowImage(name string, img Arr) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	C.cvShowImage(cname, img.arr())
+	do(func() {
+		C.cvShowImage(cname, img.arr())
+	})
 }
 
 // Window flags
@@ -85,18 +101,26 @@ func NamedWindow(name string, flags int) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	// TODO: Check result
-	C.cvNamedWindow(cname, C.int(flags))
+	do(func() {
+		C.cvNamedWindow(cname, C.int(flags))
+	})
 }
 
 // WaitKey obtains key input from the user. If delay is non-zero, then the
 // function will return if a key has not been hit before delay has elapsed.
 func WaitKey(delay time.Duration) rune {
-	return rune(C.cvWaitKey(C.int(delay.Nanoseconds() / 1e6)))
+	var key rune
+	do(func() {
+		key = rune(C.cvWaitKey(C.int(delay.Nanoseconds() / 1e6)))
+	})
+	return key
 }
 
 // DestroyWindow will close the window called name.
 func DestroyWindow(name string) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	C.cvDestroyWindow(cname)
+	do(func() {
+		C.cvDestroyWindow(cname)
+	})
 }

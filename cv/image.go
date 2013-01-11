@@ -36,7 +36,10 @@ type IplImage struct {
 // NewImage creates a new image.
 func NewImage(size Size, depth, channels int) *IplImage {
 	// XXX: This should be garbage-collected by Go.
-	i := C.cvCreateImage(C.CvSize{C.int(size.Width), C.int(size.Height)}, C.int(depth), C.int(channels))
+	var i *C.IplImage
+	do(func() {
+		i = C.cvCreateImage(C.CvSize{C.int(size.Width), C.int(size.Height)}, C.int(depth), C.int(channels))
+	})
 	return (*IplImage)(unsafe.Pointer(i))
 }
 
@@ -46,27 +49,40 @@ func (i *IplImage) arr() unsafe.Pointer {
 
 // Size returns the width and height of the image.
 func (i *IplImage) Size() Size {
-	s := C.cvGetSize(i.arr())
+	var s C.CvSize
+	do(func() {
+		s = C.cvGetSize(i.arr())
+	})
 	return Size{int(s.width), int(s.height)}
 }
 
 // Clone returns an image that has a copy of the i's data.
 func (i *IplImage) Clone() *IplImage {
-	return (*IplImage)(unsafe.Pointer(C.cvCloneImage((*C.IplImage)(unsafe.Pointer(i)))))
+	var ii *C.IplImage
+	do(func() {
+		ii = C.cvCloneImage((*C.IplImage)(unsafe.Pointer(i)))
+	})
+	return (*IplImage)(unsafe.Pointer(ii))
 }
 
 // SetCOI sets the image's channel of interest.
 func (i *IplImage) SetCOI(channel int) {
-	C.cvSetImageCOI((*C.IplImage)(unsafe.Pointer(i)), C.int(channel))
+	do(func() {
+		C.cvSetImageCOI((*C.IplImage)(unsafe.Pointer(i)), C.int(channel))
+	})
 }
 
 // SetROI sets the image's region of interest.
 func (i *IplImage) SetROI(r Rect) {
-	C.cvSetImageROI((*C.IplImage)(unsafe.Pointer(i)),
-		C.CvRect{C.int(r.X), C.int(r.Y), C.int(r.Width), C.int(r.Height)})
+	do(func() {
+		C.cvSetImageROI((*C.IplImage)(unsafe.Pointer(i)),
+			C.CvRect{C.int(r.X), C.int(r.Y), C.int(r.Width), C.int(r.Height)})
+	})
 }
 
 // Release destroys the memory associated with the image.
 func (i *IplImage) Release() {
-	C.cvReleaseImage((**C.IplImage)(unsafe.Pointer(&i)))
+	do(func() {
+		C.cvReleaseImage((**C.IplImage)(unsafe.Pointer(&i)))
+	})
 }

@@ -31,7 +31,10 @@ const (
 // added to every point in the contour.
 func FindContours(image Arr, storage MemStorage, mode, method int, offset Point) (Seq, error) {
 	var seq Seq
-	result := C.cvFindContours(image.arr(), storage.s, &seq.seq, C.sizeof_CvContour, C.int(mode), C.int(method), C.CvPoint{C.int(offset.X), C.int(offset.Y)})
+	var result C.int
+	do(func() {
+		result = C.cvFindContours(image.arr(), storage.s, &seq.seq, C.sizeof_CvContour, C.int(mode), C.int(method), C.CvPoint{C.int(offset.X), C.int(offset.Y)})
+	})
 	if result < 0 {
 		// TODO: Get error string
 		return Seq{}, errors.New("FindContours failed")
@@ -48,7 +51,11 @@ const (
 // supported. parameter is the desired approximation accuracy. parameter2
 // should be zero to indicate only the given contour.
 func ApproxPoly(srcSeq Seq, storage MemStorage, method int, parameter float64, parameter2 int) Seq {
-	return Seq{C.cvApproxPoly(unsafe.Pointer(srcSeq.seq), C.sizeof_CvContour, storage.s, C.int(method), C.double(parameter), C.int(parameter2))}
+	var seq Seq
+	do(func() {
+		seq = Seq{C.cvApproxPoly(unsafe.Pointer(srcSeq.seq), C.sizeof_CvContour, storage.s, C.int(method), C.double(parameter), C.int(parameter2))}
+	})
+	return seq
 }
 
 // ContourArea returns the area inside contour. If oriented is true, then a
@@ -60,14 +67,22 @@ func ContourArea(contour Arr, slice Slice, oriented bool) float64 {
 	} else {
 		corient = 0
 	}
-	return float64(C.cvContourArea(contour.arr(), C.CvSlice{C.int(slice.Start), C.int(slice.End)}, corient))
+	var area float64
+	do(func() {
+		area = float64(C.cvContourArea(contour.arr(), C.CvSlice{C.int(slice.Start), C.int(slice.End)}, corient))
+	})
+	return area
 }
 
 // ArcLength returns the length of the contour. If isClosed is negative, then
 // the contour is checked to see whether the contour should be considered
 // closed.  If isClosed is zero or one, then it overrides the contour's flags.
 func ArcLength(contour Arr, slice Slice, isClosed int) float64 {
-	return float64(C.cvArcLength(contour.arr(), C.CvSlice{C.int(slice.Start), C.int(slice.End)}, C.int(isClosed)))
+	var length float64
+	do(func() {
+		length = float64(C.cvArcLength(contour.arr(), C.CvSlice{C.int(slice.Start), C.int(slice.End)}, C.int(isClosed)))
+	})
+	return length
 }
 
 // ContourPerimeter returns the length of a closed contour.
@@ -77,5 +92,9 @@ func ContourPerimeter(contour Arr) float64 {
 
 // CheckContourConvexity returns true if the contour is convex.
 func CheckContourConvexity(contour Arr) bool {
-	return C.cvCheckContourConvexity(contour.arr()) != 0
+	var result C.int
+	do(func() {
+		result = C.cvCheckContourConvexity(contour.arr())
+	})
+	return result != 0
 }

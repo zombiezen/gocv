@@ -34,5 +34,7 @@ func PolyLine(img Arr, points [][]Point, closed bool, color Scalar, thickness, l
 		npts[i] = C.int(len(points[i]))
 	}
 
-	C.cvPolyLine(img.arr(), &pts[0], &npts[0], C.int(len(points)), cc, color.cvScalar(), C.int(thickness), C.int(lineType), C.int(shift))
+	do(func() {
+		C.cvPolyLine(img.arr(), &pts[0], &npts[0], C.int(len(points)), cc, color.cvScalar(), C.int(thickness), C.int(lineType), C.int(shift))
+	})
 }

@@ -36,7 +36,11 @@ func (s Seq) At(i int) unsafe.Pointer {
 	if i < 0 || i >= int(s.seq.total) {
 		panic("Seq index out of bounds")
 	}
-	return unsafe.Pointer(C.cvGetSeqElem(s.seq, C.int(i)))
+	var ptr unsafe.Pointer
+	do(func() {
+		ptr = unsafe.Pointer(C.cvGetSeqElem(s.seq, C.int(i)))
+	})
+	return ptr
 }
 
 // PointAt returns the element at i converted to a point.
@@ -50,7 +54,10 @@ func (s Seq) arr() unsafe.Pointer {
 }
 
 func (s Seq) Size() Size {
-	sz := C.cvGetSize(s.arr())
+	var sz C.CvSize
+	do(func() {
+		sz = C.cvGetSize(s.arr())
+	})
 	return Size{int(sz.width), int(sz.height)}
 }
 
