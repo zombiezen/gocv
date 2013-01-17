@@ -59,6 +59,17 @@ func (s Scalar) cvScalar() C.CvScalar {
 	return C.CvScalar{[4]C.double{C.double(s[0]), C.double(s[1]), C.double(s[2]), C.double(s[3])}}
 }
 
+// And performs a bitwise AND on src1 and src2 and stores into dst.
+func And(src1, src2, dst, mask Arr) {
+	do(func() {
+		if mask != nil {
+			C.cvAnd(src1.arr(), src2.arr(), dst.arr(), mask.arr())
+		} else {
+			C.cvAnd(src1.arr(), src2.arr(), dst.arr(), nil)
+		}
+	})
+}
+
 // Types of thresholding
 const (
 	THRESH_BINARY     = C.CV_THRESH_BINARY
@@ -77,6 +88,83 @@ func Threshold(src, dst Arr, thresh, maxVal float64, thresholdType int) float64 
 		result = float64(C.cvThreshold(src.arr(), dst.arr(), C.double(thresh), C.double(maxVal), C.int(thresholdType)))
 	})
 	return result
+}
+
+// Color space conversions
+const (
+	RGB2GRAY = C.CV_RGB2GRAY
+
+	BGR2XYZ = C.CV_BGR2XYZ
+	RGB2XYZ = C.CV_RGB2XYZ
+	XYZ2BGR = C.CV_XYZ2BGR
+	XYZ2RGB = C.CV_XYZ2RGB
+
+	BGR2YCrCb = C.CV_BGR2YCrCb
+	RGB2YCrCb = C.CV_RGB2YCrCb
+	YCrCb2BGR = C.CV_YCrCb2BGR
+	YCrCb2RGB = C.CV_YCrCb2RGB
+
+	BGR2HSV = C.CV_BGR2HSV
+	RGB2HSV = C.CV_RGB2HSV
+	HSV2BGR = C.CV_HSV2BGR
+	HSV2RGB = C.CV_HSV2RGB
+
+	BGR2HLS = C.CV_BGR2HLS
+	RGB2HLS = C.CV_RGB2HLS
+	HLS2BGR = C.CV_HLS2BGR
+	HLS2RGB = C.CV_HLS2RGB
+
+	BGR2Lab = C.CV_BGR2Lab
+	RGB2Lab = C.CV_RGB2Lab
+	Lab2BGR = C.CV_Lab2BGR
+	Lab2RGB = C.CV_Lab2RGB
+
+	BGR2Luv = C.CV_BGR2Luv
+	RGB2Luv = C.CV_RGB2Luv
+	Luv2BGR = C.CV_Luv2BGR
+	Luv2RGB = C.CV_Luv2RGB
+
+	BayerBG2BGR = C.CV_BayerBG2BGR
+	BayerGB2BGR = C.CV_BayerGB2BGR
+	BayerRG2BGR = C.CV_BayerRG2BGR
+	BayerGR2BGR = C.CV_BayerGR2BGR
+	BayerBG2RGB = C.CV_BayerBG2RGB
+	BayerGB2RGB = C.CV_BayerGB2RGB
+	BayerRG2RGB = C.CV_BayerRG2RGB
+	BayerGR2RGB = C.CV_BayerGR2RGB
+)
+
+// CvtColor converts an image from one color space to another.
+func CvtColor(src, dst Arr, code int) {
+	do(func() {
+		C.cvCvtColor(src.arr(), dst.arr(), C.int(code))
+	})
+}
+
+// Split copies each of src's channels into the destinations.
+//
+// If the source array has N channels then if the first N destination channels
+// are not nil, they all are extracted from the source array; if only a single
+// destination channel of the first N is not nil, this particular channel is
+// extracted; otherwise an error is raised. The rest of the destination channels
+// (beyond the first N) must always be nil.
+func Split(src, dst0, dst1, dst2, dst3 Arr) {
+	var p0, p1, p2, p3 unsafe.Pointer
+	if dst0 != nil {
+		p0 = dst0.arr()
+	}
+	if dst1 != nil {
+		p1 = dst1.arr()
+	}
+	if dst2 != nil {
+		p2 = dst2.arr()
+	}
+	if dst3 != nil {
+		p3 = dst3.arr()
+	}
+	do(func() {
+		C.cvSplit(src.arr(), p0, p1, p2, p3)
+	})
 }
 
 // Filtering algorithms
