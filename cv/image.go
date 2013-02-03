@@ -96,15 +96,34 @@ func ImageToCV(m image.Image) *IplImage {
 	bd := m.Bounds()
 	msize := bd.Size()
 	data := make([]byte, msize.X*msize.Y*nchannels)
-	for y := bd.Min.Y; y < bd.Max.Y; y++ {
-		for x := bd.Min.X; x < bd.Max.X; x++ {
-			r, g, b, _ := m.At(x, y).RGBA()
-			data[(y*msize.X+x)*nchannels+0] = byte(b >> 8)
-			data[(y*msize.X+x)*nchannels+1] = byte(g >> 8)
-			data[(y*msize.X+x)*nchannels+2] = byte(r >> 8)
+	switch m := m.(type) {
+	case *image.RGBA:
+		rgbToCV(data, m)
+	default:
+		for y := bd.Min.Y; y < bd.Max.Y; y++ {
+			for x := bd.Min.X; x < bd.Max.X; x++ {
+				r, g, b, _ := m.At(x, y).RGBA()
+				data[(y*msize.X+x)*nchannels+0] = byte(b >> 8)
+				data[(y*msize.X+x)*nchannels+1] = byte(g >> 8)
+				data[(y*msize.X+x)*nchannels+2] = byte(r >> 8)
+			}
 		}
 	}
 	ipl := NewImage(Size{msize.X, msize.Y}, 8, nchannels)
 	SetData(ipl, data, msize.X*nchannels)
 	return ipl
+}
+
+func rgbToCV(data []byte, rgb *image.RGBA) {
+	const nchannels = 3
+	bd := rgb.Bounds()
+	msize := bd.Size()
+	for y := 0; y < msize.Y; y++ {
+		for x := 0; x < msize.X; x++ {
+			i := y*rgb.Stride + x*4
+			data[(y*msize.X+x)*nchannels+0] = rgb.Pix[i+2]
+			data[(y*msize.X+x)*nchannels+1] = rgb.Pix[i+1]
+			data[(y*msize.X+x)*nchannels+2] = rgb.Pix[i+0]
+		}
+	}
 }
