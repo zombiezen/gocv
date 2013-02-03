@@ -97,7 +97,7 @@ func ConvertImage(m image.Image) *IplImage {
 	bd := m.Bounds()
 	msize := bd.Size()
 
-	data := mallocBytes(msize.X*msize.Y*nchannels)
+	data := cvAlloc(msize.X*msize.Y*nchannels)
 	switch m := m.(type) {
 	case *image.RGBA:
 		convertRGB(data, m)
@@ -112,7 +112,10 @@ func ConvertImage(m image.Image) *IplImage {
 		}
 	}
 	ipl := NewImage(Size{msize.X, msize.Y}, 8, nchannels)
-	SetData(ipl, data, msize.X*nchannels)
+	do(func() {
+		C.cvReleaseData(ipl.arr())
+		C.cvSetData(ipl.arr(), unsafe.Pointer(&data[0]), C.int(msize.X*nchannels))
+	})
 	return ipl
 }
 
@@ -130,8 +133,11 @@ func convertRGB(data []byte, rgb *image.RGBA) {
 	}
 }
 
-func mallocBytes(n int) []byte {
-	ptr := unsafe.Pointer(C.malloc(C.size_t(n)))
+func cvAlloc(n int) []byte {
+	var ptr unsafe.Pointer
+	do(func() {
+		ptr = unsafe.Pointer(C.cvAlloc(C.size_t(n)))
+	})
 	if ptr == nil {
 		return nil
 	}
