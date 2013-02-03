@@ -5,6 +5,7 @@ import "C"
 
 import (
 	"image"
+	"reflect"
 	"unsafe"
 )
 
@@ -88,17 +89,18 @@ func (i *IplImage) Release() {
 	})
 }
 
-// ImageToCV converts a Go image (from the image package) into an IplImage.
-// Only the RGB components are preserved.
-func ImageToCV(m image.Image) *IplImage {
+// ConvertImage converts a Go image (from the image package) into an IplImage.
+// Only the RGB components are copied.
+func ConvertImage(m image.Image) *IplImage {
 	const nchannels = 3
 
 	bd := m.Bounds()
 	msize := bd.Size()
-	data := make([]byte, msize.X*msize.Y*nchannels)
+
+	data := mallocBytes(msize.X*msize.Y*nchannels)
 	switch m := m.(type) {
 	case *image.RGBA:
-		rgbToCV(data, m)
+		convertRGB(data, m)
 	default:
 		for y := bd.Min.Y; y < bd.Max.Y; y++ {
 			for x := bd.Min.X; x < bd.Max.X; x++ {
@@ -114,7 +116,7 @@ func ImageToCV(m image.Image) *IplImage {
 	return ipl
 }
 
-func rgbToCV(data []byte, rgb *image.RGBA) {
+func convertRGB(data []byte, rgb *image.RGBA) {
 	const nchannels = 3
 	bd := rgb.Bounds()
 	msize := bd.Size()
@@ -126,4 +128,13 @@ func rgbToCV(data []byte, rgb *image.RGBA) {
 			data[(y*msize.X+x)*nchannels+2] = rgb.Pix[i+0]
 		}
 	}
+}
+
+func mallocBytes(n int) []byte {
+	ptr := unsafe.Pointer(C.malloc(C.size_t(n)))
+	if ptr == nil {
+		return nil
+	}
+	slice := reflect.SliceHeader{Data: uintptr(ptr), Len: n, Cap: n}
+	return *(*[]byte)(unsafe.Pointer(&slice))
 }
