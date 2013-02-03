@@ -33,3 +33,11 @@ func ConvertScale(src, dst Arr, scale, shift float64) {
 		C.cvConvertScale(src.arr(), dst.arr(), C.double(scale), C.double(shift))
 	})
 }
+
+// SetData copies bytes into the array.  Usually an IplImage's data will be
+// packed in interleaved BGR order.  widthStep is the number of bytes per row.
+func SetData(arr Arr, data []byte, widthStep int) {
+	do(func() {
+		C.cvSetData(arr.arr(), unsafe.Pointer(&data[0]), C.int(widthStep))
+	})
+}
