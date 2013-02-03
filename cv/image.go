@@ -5,6 +5,7 @@ import "C"
 
 import (
 	"image"
+	"image/color"
 	"reflect"
 	"unsafe"
 )
@@ -97,10 +98,12 @@ func ConvertImage(m image.Image) *IplImage {
 	bd := m.Bounds()
 	msize := bd.Size()
 
-	data := cvAlloc(msize.X*msize.Y*nchannels)
+	data := cvAlloc(msize.X * msize.Y * nchannels)
 	switch m := m.(type) {
 	case *image.RGBA:
 		convertRGB(data, m)
+	case *image.YCbCr:
+		convertYCbCr(data, m)
 	default:
 		for y := bd.Min.Y; y < bd.Max.Y; y++ {
 			for x := bd.Min.X; x < bd.Max.X; x++ {
@@ -129,6 +132,44 @@ func convertRGB(data []byte, rgb *image.RGBA) {
 			data[(y*msize.X+x)*nchannels+0] = rgb.Pix[i+2]
 			data[(y*msize.X+x)*nchannels+1] = rgb.Pix[i+1]
 			data[(y*msize.X+x)*nchannels+2] = rgb.Pix[i+0]
+		}
+	}
+}
+
+func convertYCbCr(data []byte, ycbcr *image.YCbCr) {
+	const nchannels = 3
+	bd := ycbcr.Rect
+	msize := bd.Size()
+	switch ycbcr.SubsampleRatio {
+	case image.YCbCrSubsampleRatio422:
+		for y := 0; y < msize.Y; y++ {
+			for x := 0; x < msize.X; x++ {
+				i := (y-bd.Min.Y)*ycbcr.CStride + (x/2 - bd.Min.X/2)
+				r, g, b := color.YCbCrToRGB(ycbcr.Y[y*ycbcr.YStride+x], ycbcr.Cb[i], ycbcr.Cr[i])
+				data[(y*msize.X+x)*nchannels+0] = b
+				data[(y*msize.X+x)*nchannels+1] = g
+				data[(y*msize.X+x)*nchannels+2] = r
+			}
+		}
+	case image.YCbCrSubsampleRatio420:
+		for y := 0; y < msize.Y; y++ {
+			for x := 0; x < msize.X; x++ {
+				i := (y/2-bd.Min.Y/2)*ycbcr.CStride + (x/2 - bd.Min.X/2)
+				r, g, b := color.YCbCrToRGB(ycbcr.Y[y*ycbcr.YStride+x], ycbcr.Cb[i], ycbcr.Cr[i])
+				data[(y*msize.X+x)*nchannels+0] = b
+				data[(y*msize.X+x)*nchannels+1] = g
+				data[(y*msize.X+x)*nchannels+2] = r
+			}
+		}
+	default:
+		for y := 0; y < msize.Y; y++ {
+			for x := 0; x < msize.X; x++ {
+				i := (y-bd.Min.Y)*ycbcr.CStride + (x - bd.Min.X)
+				r, g, b := color.YCbCrToRGB(ycbcr.Y[y*ycbcr.YStride+x], ycbcr.Cb[i], ycbcr.Cr[i])
+				data[(y*msize.X+x)*nchannels+0] = b
+				data[(y*msize.X+x)*nchannels+1] = g
+				data[(y*msize.X+x)*nchannels+2] = r
+			}
 		}
 	}
 }
