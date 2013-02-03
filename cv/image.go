@@ -4,6 +4,7 @@ package cv
 import "C"
 
 import (
+	"image"
 	"unsafe"
 )
 
@@ -85,4 +86,25 @@ func (i *IplImage) Release() {
 	do(func() {
 		C.cvReleaseImage((**C.IplImage)(unsafe.Pointer(&i)))
 	})
+}
+
+// ImageToCV converts a Go image (from the image package) into an IplImage.
+// Only the RGB components are preserved.
+func ImageToCV(m image.Image) *IplImage {
+	const nchannels = 3
+
+	bd := m.Bounds()
+	msize := bd.Size()
+	data := make([]byte, msize.X*msize.Y*nchannels)
+	for y := bd.Min.Y; y < bd.Max.Y; y++ {
+		for x := bd.Min.X; x < bd.Max.X; x++ {
+			r, g, b, _ := m.At(x, y).RGBA()
+			data[(y*msize.X+x)*nchannels+0] = byte(b >> 8)
+			data[(y*msize.X+x)*nchannels+1] = byte(g >> 8)
+			data[(y*msize.X+x)*nchannels+2] = byte(r >> 8)
+		}
+	}
+	ipl := NewImage(Size{msize.X, msize.Y}, 8, nchannels)
+	SetData(ipl, data, msize.X*nchannels)
+	return ipl
 }
