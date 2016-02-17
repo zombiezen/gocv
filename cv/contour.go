@@ -90,6 +90,19 @@ func ContourPerimeter(contour Arr) float64 {
 	return ArcLength(contour, WHOLE_SEQ, 1)
 }
 
+const (
+	CLOCKWISE = C.CV_CLOCKWISE
+)
+
+// Returns the ConvexHull of the contour, removing any concavity
+func ConvexHull(contour Arr, orientation int, returnPoints int) Seq {
+	var seq Seq
+	do(func() {
+		seq = Seq{C.cvConvexHull2(contour.arr(), nil, C.int(orientation), C.int(returnPoints))}
+	})
+	return seq
+}
+
 // CheckContourConvexity returns true if the contour is convex.
 func CheckContourConvexity(contour Arr) bool {
 	var result C.int
@@ -97,4 +110,13 @@ func CheckContourConvexity(contour Arr) bool {
 		result = C.cvCheckContourConvexity(contour.arr())
 	})
 	return result != 0
+}
+
+// returns the approximation of contour as a Rect
+func BoundingRect(contour Arr) Rect {
+	var rect C.struct_CvRect
+	do(func() {
+		rect = C.cvBoundingRect(contour.arr(), C.int(0))
+	})
+	return Rect{X:int(rect.x),Y:int(rect.y),Width:int(rect.width),Height:int(rect.height)}
 }
