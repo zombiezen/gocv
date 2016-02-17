@@ -91,6 +91,16 @@ func ShowImage(name string, img Arr) {
 	})
 }
 
+// SaveImage saves img to file called name
+func SaveImage(name string, img Arr) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	params := C.int(0)
+	do(func() {
+		C.cvSaveImage(cname, img.arr(), (*C.int)(&params))
+	})
+}
+
 // Window flags
 const (
 	WINDOW_AUTOSIZE = C.CV_WINDOW_AUTOSIZE
