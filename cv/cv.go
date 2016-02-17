@@ -54,6 +54,12 @@ type Rect struct {
 	X, Y, Width, Height int
 }
 
+// PointRect holds 4 points and a Rect object
+type PointRect struct {
+	Points [4]Point
+	R Rect
+}
+
 // Scalar holds up to 4 float64s. OpenCV uses scalars for colors.
 type Scalar [4]float64
 
@@ -68,6 +74,17 @@ func And(src1, src2, dst, mask Arr) {
 			C.cvAnd(src1.arr(), src2.arr(), dst.arr(), mask.arr())
 		} else {
 			C.cvAnd(src1.arr(), src2.arr(), dst.arr(), nil)
+		}
+	})
+}
+
+// Or performs a bitwise OR on src1 and src2 and stores into dst
+func Or(src1, src2, dst, mask Arr) {
+	do(func() {
+		if mask != nil {
+			C.cvOr(src1.arr(), src2.arr(), dst.arr(), mask.arr())
+		} else {
+			C.cvOr(src1.arr(), src2.arr(), dst.arr(), nil)
 		}
 	})
 }
@@ -188,15 +205,35 @@ func PyrUp(src, dst Arr, filter int) {
 	})
 }
 
+const (
+	SHAPE_RECT = C.CV_SHAPE_RECT
+)
+
 // IplConvKernel is a convolution kernel.
 type IplConvKernel struct {
 	NCols   int
 	NRows   int
 	AnchorX int
 	AnchorY int
+	Shape int
 	Values  uintptr // TODO
 	NShiftR int
 }
+
+func ReleaseStructuringElement(element *IplConvKernel) {
+	do(func() {
+		C.cvReleaseStructuringElement((**C.IplConvKernel)(unsafe.Pointer(element)))
+	})
+}
+
+// Morphology constants
+const (
+	MORPH_OPEN = C.CV_MOP_OPEN
+	MORPH_CLOSE = C.CV_MOP_CLOSE
+	MORPH_GRADIENT = C.CV_MOP_GRADIENT
+	MORPH_TOPHAT = C.CV_MOP_TOPHAT
+	MORPH_BLACKHAT = C.CV_MOP_BLACKHAT
+)
 
 // Dilate applies a maximum filter to the input image one or more times.  If
 // element is nil, a 3x3 rectangular element is used.
@@ -211,5 +248,11 @@ func Dilate(src, dst Arr, element *IplConvKernel, iterations int) {
 func Erode(src, dst Arr, element *IplConvKernel, iterations int) {
 	do(func() {
 		C.cvErode(src.arr(), dst.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(iterations))
+	})
+}
+
+func MorphologyEx(src, dst, temp Arr, element *IplConvKernel, operation, iterations int) {
+	do(func() {
+		C.cvMorphologyEx(src.arr(), dst.arr(), temp.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(operation), C.int(iterations))
 	})
 }
