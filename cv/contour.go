@@ -90,13 +90,15 @@ func ContourPerimeter(contour Arr) float64 {
 	return ArcLength(contour, WHOLE_SEQ, 1)
 }
 
+type Orientation int
+
 const (
-	CLOCKWISE         = C.CV_CLOCKWISE
-	COUNTER_CLOCKWISE = C.CV_COUNTER_CLOCKWISE
+	CLOCKWISE         Orientation = C.CV_CLOCKWISE
+	COUNTER_CLOCKWISE Orientation = C.CV_COUNTER_CLOCKWISE
 )
 
 // Returns the ConvexHull of the contour, removing any concavity
-func ConvexHull(contour Arr, orientation int, returnPoints int) Seq {
+func ConvexHull(contour Arr, orientation Orientation, returnPoints int) Seq {
 	var seq Seq
 	do(func() {
 		seq = Seq{C.cvConvexHull2(contour.arr(), nil, C.int(orientation), C.int(returnPoints))}
