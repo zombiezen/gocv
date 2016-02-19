@@ -91,7 +91,7 @@ func ContourPerimeter(contour Arr) float64 {
 }
 
 const (
-	CLOCKWISE = C.CV_CLOCKWISE
+	CLOCKWISE         = C.CV_CLOCKWISE
 	COUNTER_CLOCKWISE = C.CV_COUNTER_CLOCKWISE
 )
 
@@ -119,5 +119,5 @@ func BoundingRect(contour Arr) Rect {
 	do(func() {
 		rect = C.cvBoundingRect(contour.arr(), C.int(0))
 	})
-	return Rect{X:int(rect.x),Y:int(rect.y),Width:int(rect.width),Height:int(rect.height)}
+	return Rect{X: int(rect.x), Y: int(rect.y), Width: int(rect.width), Height: int(rect.height)}
 }
