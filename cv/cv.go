@@ -57,7 +57,7 @@ type Rect struct {
 // PointRect holds 4 points and a Rect object
 type PointRect struct {
 	Points [4]Point
-	R Rect
+	Rect Rect
 }
 
 // Scalar holds up to 4 float64s. OpenCV uses scalars for colors.
