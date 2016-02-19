@@ -92,6 +92,7 @@ func ContourPerimeter(contour Arr) float64 {
 
 const (
 	CLOCKWISE = C.CV_CLOCKWISE
+	COUNTER_CLOCKWISE = C.CV_COUNTER_CLOCKWISE
 )
 
 // Returns the ConvexHull of the contour, removing any concavity
