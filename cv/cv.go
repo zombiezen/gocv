@@ -227,12 +227,14 @@ func ReleaseStructuringElement(element *IplConvKernel) {
 }
 
 // Morphology constants
+type Morphology int
+
 const (
-	MORPH_OPEN     = C.CV_MOP_OPEN
-	MORPH_CLOSE    = C.CV_MOP_CLOSE
-	MORPH_GRADIENT = C.CV_MOP_GRADIENT
-	MORPH_TOPHAT   = C.CV_MOP_TOPHAT
-	MORPH_BLACKHAT = C.CV_MOP_BLACKHAT
+	MORPH_OPEN     Morphology = C.CV_MOP_OPEN
+	MORPH_CLOSE    Morphology = C.CV_MOP_CLOSE
+	MORPH_GRADIENT Morphology = C.CV_MOP_GRADIENT
+	MORPH_TOPHAT   Morphology = C.CV_MOP_TOPHAT
+	MORPH_BLACKHAT Morphology = C.CV_MOP_BLACKHAT
 )
 
 // Dilate applies a maximum filter to the input image one or more times.  If
@@ -251,7 +253,7 @@ func Erode(src, dst Arr, element *IplConvKernel, iterations int) {
 	})
 }
 
-func MorphologyEx(src, dst, temp Arr, element *IplConvKernel, operation, iterations int) {
+func MorphologyEx(src, dst, temp Arr, element *IplConvKernel, operation Morphology, iterations int) {
 	do(func() {
 		C.cvMorphologyEx(src.arr(), dst.arr(), temp.arr(), (*C.IplConvKernel)(unsafe.Pointer(element)), C.int(operation), C.int(iterations))
 	})
