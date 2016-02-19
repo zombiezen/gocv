@@ -57,7 +57,7 @@ type Rect struct {
 // PointRect holds 4 points and a Rect object
 type PointRect struct {
 	Points [4]Point
-	Rect Rect
+	Rect   Rect
 }
 
 // Scalar holds up to 4 float64s. OpenCV uses scalars for colors.
@@ -215,7 +215,7 @@ type IplConvKernel struct {
 	NRows   int
 	AnchorX int
 	AnchorY int
-	Shape int
+	Shape   int
 	Values  uintptr // TODO
 	NShiftR int
 }
@@ -228,10 +228,10 @@ func ReleaseStructuringElement(element *IplConvKernel) {
 
 // Morphology constants
 const (
-	MORPH_OPEN = C.CV_MOP_OPEN
-	MORPH_CLOSE = C.CV_MOP_CLOSE
+	MORPH_OPEN     = C.CV_MOP_OPEN
+	MORPH_CLOSE    = C.CV_MOP_CLOSE
 	MORPH_GRADIENT = C.CV_MOP_GRADIENT
-	MORPH_TOPHAT = C.CV_MOP_TOPHAT
+	MORPH_TOPHAT   = C.CV_MOP_TOPHAT
 	MORPH_BLACKHAT = C.CV_MOP_BLACKHAT
 )
 
