@@ -6,7 +6,7 @@ package cv
 // #cgo CFLAGS: -Wno-error
 // #cgo !windows pkg-config: opencv
 // #cgo windows CFLAGS: -IC:/opencv/include -IC:/opencv/include/opencv -IC:/opencv/include/opencv2
-// #cgo windows LDFLAGS: -LC:/opencv/build/x86/mingw/bin -lopencv_calib3d243 -lopencv_contrib243 -lopencv_core243 -lopencv_features2d243 -lopencv_flann243 -lopencv_gpu243 -lopencv_highgui243 -lopencv_imgproc243 -lopencv_legacy243 -lopencv_ml243 -lopencv_nonfree243 -lopencv_objdetect243 -lopencv_photo243 -lopencv_stitching243 -lopencv_video243 -lopencv_videostab243 -lopencv_ffmpeg243
+// #cgo windows LDFLAGS: -LC:/opencv/build/x86/mingw/bin -lopencv_calib3d2411 -lopencv_contrib2411 -lopencv_core2411 -lopencv_features2d2411 -lopencv_flann2411 -lopencv_gpu2411 -lopencv_highgui2411 -lopencv_imgproc2411 -lopencv_legacy2411 -lopencv_ml2411 -lopencv_nonfree2411 -lopencv_objdetect2411 -lopencv_photo2411 -lopencv_stitching2411 -lopencv_video2411 -lopencv_videostab2411 -lopencv_ffmpeg2411
 // #include "cv.h"
 import "C"
 
