@@ -6,7 +6,7 @@ package cv
 // #cgo CFLAGS: -Wno-error
 // #cgo !windows pkg-config: opencv
 // #cgo windows CFLAGS: -IC:/opencv/build/include -IC:/opencv/build/include/opencv -IC:/opencv/build/include/opencv2
-// #cgo windows LDFLAGS: -LC:/opencv/build/x86/vc11/bin -lopencv_calib3d2411 -lopencv_contrib2411 -lopencv_core2411 -lopencv_features2d2411 -lopencv_flann2411 -lopencv_gpu2411 -lopencv_highgui2411 -lopencv_imgproc2411 -lopencv_legacy2411 -lopencv_ml2411 -lopencv_nonfree2411 -lopencv_objdetect2411 -lopencv_photo2411 -lopencv_stitching2411 -lopencv_video2411 -lopencv_videostab2411 -lopencv_ffmpeg2411 
+// #cgo windows LDFLAGS: -LC:/opencv/build/x86/vc11/bin -lopencv_calib3d2411 -lopencv_contrib2411 -lopencv_core2411 -lopencv_features2d2411 -lopencv_flann2411 -lopencv_gpu2411 -lopencv_highgui2411 -lopencv_imgproc2411 -lopencv_legacy2411 -lopencv_ml2411 -lopencv_nonfree2411 -lopencv_objdetect2411 -lopencv_photo2411 -lopencv_stitching2411 -lopencv_video2411 -lopencv_videostab2411 -lopencv_ffmpeg2411
 // #include "cv.h"
 import "C"
 
@@ -54,9 +54,9 @@ type Rect struct {
 	X, Y, Width, Height int
 }
 
-// PointRect holds 4 points and a Rect object
-type PointRect struct {
-	Points [4]Point
+// Polygon holds n points and a Rect object representation of the Polygon
+type Polygon struct {
+	Points []Point
 	Rect   Rect
 }
 
