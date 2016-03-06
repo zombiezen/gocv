@@ -26,12 +26,18 @@ func PolyLine(img Arr, points [][]Point, closed bool, color Scalar, thickness, l
 		}
 	}
 
-	pts := make([]*C.CvPoint, len(points))
-	npts := make([]C.int, len(points))
+	pts := make([]*C.CvPoint, 0)
+	npts := make([]C.int, 0)
 	for i := range points {
 		// XXX: Is it safe to pass our point struct as CvPoint?
-		pts[i] = &cvpoints[i][0]
-		npts[i] = C.int(len(points[i]))
+		if len(cvpoints[i]) != 0 {
+			pts = append(pts, &cvpoints[i][0])
+			npts = append(npts, C.int(len(points[i])))
+		}
+	}
+
+	if len(pts) == 0 {
+		return
 	}
 
 	do(func() {
