@@ -54,6 +54,16 @@ type Rect struct {
 	X, Y, Width, Height int
 }
 
+// getPoints returns the point representation of a Rect
+func (r Rect) getPoints() [4]Point {
+	var points [4]Point
+	points[0] = Point{r.X, r.Y}
+	points[1] = Point{r.X + r.Width, r.Y}
+	points[2] = Point{r.X + r.Width, r.Y + r.Height}
+	points[3] = Point{r.X, r.Y + r.Height}
+	return points
+}
+
 // Scalar holds up to 4 float64s. OpenCV uses scalars for colors.
 type Scalar [4]float64
 
