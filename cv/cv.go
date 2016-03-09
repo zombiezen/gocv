@@ -54,12 +54,6 @@ type Rect struct {
 	X, Y, Width, Height int
 }
 
-// Polygon holds n points and a Rect object representation of the Polygon
-type Polygon struct {
-	Points []Point
-	Rect   Rect
-}
-
 // Scalar holds up to 4 float64s. OpenCV uses scalars for colors.
 type Scalar [4]float64
 
