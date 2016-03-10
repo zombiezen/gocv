@@ -24,15 +24,17 @@ func PolyLine(img Arr, points [][]Point, closed bool, color Scalar, thickness, l
 
 	for i := range points {
 
-		cvpoints[i] = make([]C.CvPoint, len(points[i]))
+		if len(points[i]) != 0 {
 
-		for j := range points[i] {
-			cvpoints[i][j] = C.CvPoint{C.int(points[i][j].X), C.int(points[i][j].Y)}
-		}
+			cvpoints[i] = make([]C.CvPoint, len(points[i]))
 
-		if len(cvpoints[i]) != 0 {
+			for j := range points[i] {
+				cvpoints[i][j] = C.CvPoint{C.int(points[i][j].X), C.int(points[i][j].Y)}
+			}
+
 			pts = append(pts, &cvpoints[i][0])
 			npts = append(npts, C.int(len(points[i])))
+
 		}
 	}
 
