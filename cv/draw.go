@@ -30,7 +30,6 @@ func PolyLine(img Arr, points [][]Point, closed bool, color Scalar, thickness, l
 			cvpoints[i][j] = C.CvPoint{C.int(points[i][j].X), C.int(points[i][j].Y)}
 		}
 
-		// XXX: Is it safe to pass our point struct as CvPoint?
 		if len(cvpoints[i]) != 0 {
 			pts = append(pts, &cvpoints[i][0])
 			npts = append(npts, C.int(len(points[i])))
