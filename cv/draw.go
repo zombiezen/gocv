@@ -24,7 +24,7 @@ func PolyLine(img Arr, points [][]Point, closed bool, color Scalar, thickness, l
 
 	for i := range points {
 
-		if len(points[i]) != 0 {
+		if len(points[i]) == 0 {
 			continue
 		}
 
